@@ -70,7 +70,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 })->middleware('auth:admin');
 
 
-
 Route::middleware(['auth'])->group(function () {
     Route::get('book-requests/create', [BookRequestController::class, 'create'])->name('book-requests.create');
     Route::get('book-requests/index', [BookRequestController::class, 'index'])->name('book-requests.index');
