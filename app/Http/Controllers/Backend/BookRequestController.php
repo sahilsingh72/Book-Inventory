@@ -61,17 +61,31 @@ class BookRequestController extends Controller
     // Store a new book request
     public function store(HttpRequest $request) 
     {
+        // dd($request->all());
         $user = Auth::user();
         $requestfrom = $this->getRequestedFrom();
         try{
-            $bookRequest = new BookRequest(); // Use the Request model
-            $bookRequest->requested_by = Auth::id(); // ID of the logged-in admin (ALC or DLC)
-            $bookRequest->requested_from = $requestfrom; // Logic to find out if requesting from DLC or OKCL
-            $bookRequest->book_id = $request->book_id;
-            $bookRequest->quantity = $request->quantity;
-            $bookRequest->status = 'pending';
-            $bookRequest->save();
-        
+            // Validate incoming data
+            $request->validate([
+                'book_id.*' => 'required|exists:books,id', // Each book_id must exist in the books table
+                'quantity.*' => 'required|integer|min:1', // Each quantity must be an integer greater than 0
+            ]);
+
+            $book_ids = $request->input('book_id'); // Array of book IDs
+            $quantities = $request->input('quantity'); // Array of quantities
+
+            foreach ($book_ids as $index => $book_id) {
+                if (isset($quantities[$index])) {
+                    $bookRequest = new BookRequest(); // Use the Request model
+                    $bookRequest->requested_by = Auth::id(); // ID of the logged-in admin (ALC or DLC)
+                    $bookRequest->requested_from = $requestfrom; // Logic to find out if requesting from DLC or OKCL
+                    $bookRequest->book_id = $book_id;
+                    $bookRequest->quantity = $quantities[$index];
+                    $bookRequest->status = 'pending';
+                    $bookRequest->save();
+                }
+            }
+
             return redirect()->route('book-requests.view')->with('success', 'Book request created successfully.');
         }
         catch (\Exception $e) {

@@ -62,27 +62,29 @@ Book - Admin Panel
                             </thead>
                             <tbody>
                                 @foreach($books as $key=>$book)
-                                <tr>
-                                    {{-- @if (auth::guard('admin')->user()->role === 'okcl') --}}
-                                    <td>{{ ++$key }}</td>
-                                    <td>{{ $book->title }}</td>
-                                    <td>{{ $book->author }}</td>
-                                    <td>{{ $book->isbn }}</td>
-                                    <td>{{ $book->published_date }}</td>
-                                    <td>{{ $book->quantity }}</td>
-                                    <td>   
-                                        <button type="button" class="btn btn-info btn-sm"  onclick="view({{ $book->id }})">
-                                            View
-                                        </button>
-                                        <button type="button" class="btn btn-warning btn-sm"  onclick="editBookModal({{ $book->id }})">
-                                            Edit
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm"  onclick="deleteBookModal({{ $book->id }})" >
-                                            Delete
-                                        </button>   
-                                    </td>
-                                    {{-- @endif --}}
-                                </tr>
+                                    <tr>
+                                        @if (auth::guard('admin')->user()->role === 'okcl')
+                                            <td>{{ ++$key }}</td>
+                                            <td>{{ $book->title }}</td>
+                                            <td>{{ $book->author }}</td>
+                                            <td>{{ $book->isbn }}</td>
+                                            <td>{{ $book->published_date }}</td>
+                                            <td>{{ $book->quantity }}</td>
+                                            @if (auth::guard('admin')->user()->role === 'okcl')
+                                                <td>   
+                                                    <button type="button" class="btn btn-info btn-sm"  onclick="view({{ $book->id }})">
+                                                        View
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning btn-sm"  onclick="editBookModal({{ $book->id }})">
+                                                        Edit
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-sm"  onclick="deleteBookModal({{ $book->id }})" >
+                                                        Delete
+                                                    </button>   
+                                                </td>
+                                            @endif
+                                        @endif
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
