@@ -33,9 +33,11 @@
                             @if($usr->can('book.view'))
                                 <li class="{{ Route::is('admin.book.index') ? 'active' : '' }}"><a href="{{ route('admin.book.index') }}">Book</a></li>
                             @endif
+                            {{-- @if ((auth::guard('admin')->user()->role === 'dlc') ||(auth::guard('admin')->user()->role === 'alc') ) --}}
                             @if($usr->can('book.create'))
                                 <li class="{{ Route::is('book-requests.create') ? 'active' : '' }}"><a href="{{ route('book-requests.create') }}">Request</a></li>
                             @endif
+                            {{-- @endif --}}
                             @if($usr->can('book.approve'))
                                 <li class="{{ Route::is('book-requests.index') ? 'active' : '' }}"><a href="{{ route('book-requests.index') }}">Request arrived</a></li>
                            @endif

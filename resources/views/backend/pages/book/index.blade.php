@@ -30,12 +30,13 @@ Book - Admin Panel
     <div class="row">
         <!-- data table start -->
         <div class="col-12 mt-5">
-            <div class="card">
+            <div class="card">  
+
                 <div class="card-body">
                     <h4 class="header-title float-left">Book Inventory</h4>
                     <p class="float-right mb-2">
                         @if(Auth::guard('admin')->user()->role === 'okcl')
-                        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#createBookModal">Add New Book</button>
+                            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#createBookModal">Add New Book</button>
                         @endif
                     </p>
                     <div class="clearfix"></div>
@@ -62,7 +63,7 @@ Book - Admin Panel
                             <tbody>
                                 @foreach($books as $key=>$book)
                                 <tr>
-                                    @if (auth::guard('admin')->user()->role === 'okcl')
+                                    {{-- @if (auth::guard('admin')->user()->role === 'okcl') --}}
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $book->title }}</td>
                                     <td>{{ $book->author }}</td>
@@ -80,7 +81,7 @@ Book - Admin Panel
                                             Delete
                                         </button>   
                                     </td>
-                                    @endif
+                                    {{-- @endif --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -255,6 +256,7 @@ Book - Admin Panel
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <!-- data table end -->
