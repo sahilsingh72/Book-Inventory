@@ -68,14 +68,15 @@ class RolePermissionSeeder extends Seeder
                 ]
             ],
             [
-                'group_name' => 'book_view',
+                'group_name' => 'book',
                 'permissions' => [
-                    // profile Permissions
+                    // book Permissions
                     'book.view',
                     'book.edit',
                     'book.delete',
-                    'book.update',
                     'book.approve',
+                    'book.reject',
+                    'book.distribution',
                 ]
             ],
 

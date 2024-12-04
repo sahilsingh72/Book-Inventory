@@ -95,7 +95,6 @@ class RolePermissionSeeder extends Seeder
                     'book.edit',
                     'book.view',
                     'book.delete',
-                    'book.update',
                     'book.approve',
 
                 ]
