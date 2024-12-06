@@ -14,7 +14,7 @@ Request Book List - Admin Panel
             <div class="breadcrumbs-area clearfix">
                 <h4 class="page-title pull-left">Challan</h4>
                 <ul class="breadcrumbs pull-left">
-                    <li><a href="#">Book Challan</a></li>
+                    <li><a href="{{route('challans.index')}}">Book Challan</a></li>
                     <li><span>Challan</span></li>
                 </ul>
             </div>

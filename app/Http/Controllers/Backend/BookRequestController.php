@@ -32,6 +32,7 @@ class BookRequestController extends Controller
             ->where('book_requests.status', $status)
             ->orderBy('book_requests.created_at', 'desc')
             ->get();
+            
         } 
         elseif($role ==='dlc'){
             // DLC role: show requests coming from ALC to DLC
@@ -76,6 +77,17 @@ class BookRequestController extends Controller
 
             foreach ($book_ids as $index => $book_id) {
                 if (isset($quantities[$index])) {
+                    $check_book_status = BookRequest::where('requested_by',Auth::id())
+                    ->where('book_id',$book_id)
+                    ->where('status',"pending");
+                    if($check_book_status->count() > 0){
+                        $book = $check_book_status->first();
+                        $bookRequest =  BookRequest::find($book->id);  
+                        $bookRequest->quantity = $book->quantity + $quantities[$index];
+                        $bookRequest->update();
+                    }else{
+
+                    
                     $bookRequest = new BookRequest(); // Use the Request model
                     $bookRequest->requested_by = Auth::id(); // ID of the logged-in admin (ALC or DLC)
                     $bookRequest->requested_from = $requestfrom; // Logic to find out if requesting from DLC or OKCL
@@ -83,6 +95,7 @@ class BookRequestController extends Controller
                     $bookRequest->quantity = $quantities[$index];
                     $bookRequest->status = 'pending';
                     $bookRequest->save();
+                }
                 }
             }
 
@@ -186,6 +199,10 @@ class BookRequestController extends Controller
         $bookRequests->update();
         return redirect()->back()->with('success', 'Request Declined!.');
         }
+
+    public function alcDistribution(){
+        return view('backend.pages.book-requests.alc_distribute');
+    }
 
     public function generateChallan($bookRequests)
     {

@@ -26,23 +26,29 @@
                     </li>
                     @endif
 
-                    @if ($usr->can('book.create') || $usr->can('book.view') ||  $usr->can('book.edit') ||  $usr->can('book.delete'))
+                    @if ($usr->can('book.create') || $usr->can('book.view') ||  $usr->can('book.edit') ||  $usr->can('book.delete') || $usr->can('book.distribution') || $usr->can('book.stock'))
                     <li>
                         <a href="javascript:void(0)" aria-expanded="true"><i class="ti-book"></i><span>book</span></a>
-                        <ul class="collapse {{ Route::is('admin.book.create') || Route::is('admin.book.index') || Route::is('book-requests.index') || Route::is('book-requests.create') || Route::is('admin.book.edit') || Route::is('admin.book.show') ? 'in' : '' }}">
+                        <ul class="collapse {{ Route::is('admin.book.create') || Route::is('admin.book.index') || Route::is('book-requests.index') || Route::is('book-requests.create') || Route::is('admin.book.edit') || Route::is('admin.book.show') || Route::is('book-requests.alc-distribution') ? 'in' : '' }}">
                             @if($usr->can('book.view'))
                                 <li class="{{ Route::is('admin.book.index') ? 'active' : '' }}"><a href="{{ route('admin.book.index') }}">Book</a></li>
                             @endif
-                            {{-- @if ((auth::guard('admin')->user()->role === 'dlc') ||(auth::guard('admin')->user()->role === 'alc') ) --}}
-                            @if($usr->can('book.create'))
-                                <li class="{{ Route::is('book-requests.create') ? 'active' : '' }}"><a href="{{ route('book-requests.create') }}">Request</a></li>
+                            @if($usr->can('book.stock'))
+                                <li class="{{ Route::is('admin.book.stock') ? 'active' : '' }}"><a href="{{ route('admin.book.stock') }}">Book</a></li>
                             @endif
-                            {{-- @endif --}}
+                            @if($usr->can('book.create'))
+                                <li class="{{ Route::is('book-requests.create') ? 'active' : '' }}"><a href="{{ route('book-requests.create') }}">Create Request</a></li>
+                            @endif
                             @if($usr->can('book.approve'))
                                 <li class="{{ Route::is('book-requests.index') ? 'active' : '' }}"><a href="{{ route('book-requests.index') }}">Request arrived</a></li>
-                           @endif
+                            @endif
+                            @if($usr->can('book.distribution'))
+                                <li class="{{ Route::is('book-requests.alc-distribution') ? 'active' : '' }}"><a href="{{ route('book-requests.alc-distribution') }}">Book Supply</a></li>
+                            @endif
                         </ul>
                     </li>
+                    @endif
+
                     
                     @if ($usr->can('role.create') || $usr->can('role.view') ||  $usr->can('role.edit') ||  $usr->can('role.delete'))
                     <li>
@@ -73,7 +79,6 @@
                             @endif
                         </ul>
                     </li>
-                    @endif
                     @endif
                     <li>
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-copy"></i><span>Report</span></a>

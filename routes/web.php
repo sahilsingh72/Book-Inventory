@@ -45,7 +45,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('book/edit/{id}', [BookController::class, 'edit'])->name('book.edit');
     Route::get('book/show/{id}', [BookController::class, 'show'])->name('book.show');
     Route::post('book/update', [BookController::class, 'update'])->name('book.update');
-  
+    Route::get('book-stock',[BookController::class, 'bookStock'])->name('book.stock');
 
     
     Route::resource('roles', RolesController::class);
@@ -78,6 +78,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/book-requests', [BookRequestController::class, 'request_view'])->name('request_view'); // see approved/declined req
     Route::post('book-requests/{id}/approve', [BookRequestController::class, 'updateStatusapprove'])->name('book-requests.approve');
     Route::post('book-requests/{id}/decline', [BookRequestController::class, 'updateStatusdecline'])->name('book-requests.decline');
+    Route::get('book-requests/alc-distribution', [BookRequestController::class, 'alcDistribution'])->name('book-requests.alc-distribution');
+
 
     Route::get('/book-requests/{id}/challan', [BookRequestController::class, 'generateChallan'])->name('book-requests.challan.generate');
     // Route::get('/challans', [ChallanController::class, 'viewChallans'])->name('challans.index');

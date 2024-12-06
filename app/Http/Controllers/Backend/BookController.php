@@ -72,5 +72,8 @@ class BookController extends Controller
 
        return redirect()->back()->with('success', 'Book deleted successfully');
     }
+    public function bookStock(){
+        return view('backend.pages.book.book-stock');
+    }
 
 }
