@@ -58,10 +58,13 @@ Book request - Admin Panel
                                             <td>{{ ucfirst($request->status) }}</td>
                                             <td>
                                                 @if($request->status === 'pending')
-                                                    <form action="{{ route('book-requests.approve', $request->id) }}" method="POST" style="display: inline-block;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-success">Approve</button>
-                                                    </form>
+
+                                                <button type="button" 
+                                                        class="btn btn-success" 
+                                                        onclick="openApproveModal({{ $request->id }}, '{{ $request->title }}', {{ $request->quantity }})">
+                                                    Approve
+                                                </button>
+
                                                     <form action="{{ route('book-requests.decline', $request->id) }}" method="POST" style="display: inline-block;">
                                                         @csrf
                                                         <button type="submit" class="btn btn-danger">Decline</button>
@@ -82,4 +85,47 @@ Book request - Admin Panel
         <!-- data table end -->
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form action="{{ route('book-requests.approve', ':id') }}" method="POST" id="approveForm">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approveModalLabel">Approve Book Request</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Book Title:</strong> <span id="modalBookTitle"></span></p>
+                    <div class="form-group">
+                        <label for="modalQuantity">Quantity</label>
+                        <input type="number" class="form-control" id="modalQuantity" name="quantity" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openApproveModal(id, title, quantity) {
+        // Set modal data
+        document.getElementById('modalBookTitle').textContent = title;
+        document.getElementById('modalQuantity').value = quantity;
+
+        // Update form action
+        const form = document.getElementById('approveForm');
+        form.action = form.action.replace(':id', id);
+
+        // Show modal
+        $('#approveModal').modal('show');
+    }
+</script>
 @endsection

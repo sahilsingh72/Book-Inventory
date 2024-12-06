@@ -173,18 +173,30 @@ class BookRequestController extends Controller
         
         return view('backend.pages.book-requests.request_book_list', compact('bookRequests'));
     }
-    public function updateStatusapprove($id){
+    public function updateStatusapprove(Request $request, $id){
+
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
 
         $bookRequests = BookRequest::find($id);
 
         if (!$bookRequests) {
             return redirect()->back()->with('error', 'Book request not found.');
         }
+
+        $book = $bookRequests->book;
+
+        // Check if sufficient books are available
+        if ($book->quantity < $request->quantity) {
+            return redirect()->back()->with('error', 'Not enough books available.');
+        }
+        
         $bookRequests->status ='Approved';
+        $bookRequests->quantity = $request->quantity;
         $bookRequests->update();
 
         // Update book quantities
-        $book = $bookRequests->book;
         $book->quantity -= $bookRequests->quantity;
         $book->save();
 
