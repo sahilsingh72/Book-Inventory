@@ -31,7 +31,7 @@ Book Request Create- Admin Panel
         <div class="col-12 mt-5">
             <div class="card">
                 <div class="card-body">
-                    <a href="{{route('book-requests.view')}}"><button type="button" class="btn btn-primary mb-5"  style="float:right">View Request Book List</button></a>
+                    <a href="{{route('book-requests.view')}}"><button type="button" class="btn btn-primary mb-5"  style="float:right; margin-right:15px">View Request Book List</button></a>
                     <h4 class="header-title float-left">Create Book Request</h4>
                     <div class="clearfix"></div>
                     <div class="data-tables">
@@ -41,7 +41,7 @@ Book Request Create- Admin Panel
                                 <div class="form-row mb-2">
                                     <div class="form-group mr-2">
                                         <label for="book_id" class="mr-2">Select Book:</label>
-                                        <select name="book_id[]" id="book_id" class="form-control "style="width:350px" required>
+                                        <select name="book_id[]" id="book_id" class="form-control "style="width:400px" required>
                                             @foreach($books as $book)
                                                 <option value="{{ $book->id }}">{{ $book->title }}</option>
                                             @endforeach
@@ -50,13 +50,15 @@ Book Request Create- Admin Panel
                                 
                                     <div class="form-group mr-2" style="margin-left:50px">
                                         <label for="quantity" class="mr-2">Quantity:</label>
-                                        <input type="number" name="quantity[]" id="quantity" style="width:300px" class="form-control" required>
+                                        <input type="number" name="quantity[]" id="quantity" style="width:350px" class="form-control" required>
                                     </div>
 
                                     <button type="button" class="btn btn-success add-more">+</button>
                                 </div>
-                            </div>                        
-                            <button type="submit" class="btn btn-primary">Request Book</button>
+                            </div>
+                            {{-- <div class="form-row justify-content-start mt-5" style="margin-left:100px">                     --}}
+                                <button type="submit" style="margin-left:890px" class="btn btn-primary mt-2">Request Book</button>
+                            {{-- </div> --}}
                         </form>   
                     </div>
                 </div>
@@ -75,10 +77,10 @@ Book Request Create- Admin Panel
             if (e.target && e.target.classList.contains('add-more')) {
                 e.preventDefault();
                 const newRow = `
-                <div class="form-row mb-2">
+                <div class="form-row mb-2" style="">
                     <div class="form-group mr-2">
                         <label for="book_id" class="mr-2">Select Book:</label>
-                        <select name="book_id[]" class="form-control" style="width:350px" required>
+                        <select name="book_id[]" class="form-control" style="width:400px" required>
                             @foreach($books as $book)
                                 <option value="{{ $book->id }}">{{ $book->title }}</option>
                             @endforeach
@@ -87,7 +89,7 @@ Book Request Create- Admin Panel
                 
                     <div class="form-group mr-2" style="margin-left:50px">
                         <label for="quantity" class="mr-2">Quantity:</label>
-                        <input type="number" name="quantity[]" style="width:300px" class="form-control" required>
+                        <input type="number" name="quantity[]" style="width:350px" class="form-control" required>
                     </div>
 
                     <button type="button" class="btn btn-danger remove-row">-</button>

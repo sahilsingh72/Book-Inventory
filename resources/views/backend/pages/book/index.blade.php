@@ -63,7 +63,7 @@ Book - Admin Panel
                             <tbody>
                                 @foreach($books as $key=>$book)
                                     <tr>
-                                        @if (auth::guard('admin')->user()->role === 'okcl')
+                                        {{-- @if (auth::guard('admin')->user()->role === 'okcl') --}}
                                             <td>{{ ++$key }}</td>
                                             <td>{{ $book->title }}</td>
                                             <td>{{ $book->author }}</td>
@@ -83,7 +83,7 @@ Book - Admin Panel
                                                     </button>   
                                                 </td>
                                             @endif
-                                        @endif
+                                        {{-- @endif --}}
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -77,6 +77,7 @@ class RolePermissionSeeder extends Seeder
                     'book.approve',
                     'book.reject',
                     'book.distribution',
+                    'book.stock',
                 ]
             ],
 
