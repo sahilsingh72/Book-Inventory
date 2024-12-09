@@ -45,7 +45,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('book/edit/{id}', [BookController::class, 'edit'])->name('book.edit');
     Route::get('book/show/{id}', [BookController::class, 'show'])->name('book.show');
     Route::post('book/update', [BookController::class, 'update'])->name('book.update');
-    Route::get('book-stock',[BookController::class, 'bookStock'])->name('book.stock');
+    Route::get('book-stock',[BookController::class, 'showStock'])->name('book.stock');
+    Route::get('/stock', [DashboardController::class, 'showStock'])->name('stock.index');
+
 
     
     Route::resource('roles', RolesController::class);
