@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\BookRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Book;
-use App\Models\Admin;  
+use App\Models\Admin;
+use App\Models\BookStock;
 use Illuminate\Http\Request;
 use App\Models\Challan;   
 use Illuminate\Support\Facades\Log;
@@ -179,19 +180,23 @@ class BookRequestController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
+        // Find the book request 
         $bookRequests = BookRequest::find($id);
-
         if (!$bookRequests) {
             return redirect()->back()->with('error', 'Book request not found.');
+        }   
+        // Fetch the book details from the books table
+        $book = $bookRequests->book;
+        if (!$book) {
+            return redirect()->back()->with('error', 'Book not found.');
         }
 
-        $book = $bookRequests->book;
-
-        // Check if sufficient books are available
+        // Check if sufficient books are available in OKCL stock
         if ($book->quantity < $request->quantity) {
             return redirect()->back()->with('error', 'Not enough books available.');
         }
         
+        // Approve the book request and update quantity
         $bookRequests->status ='Approved';
         $bookRequests->quantity = $request->quantity;
         $bookRequests->update();
@@ -199,18 +204,50 @@ class BookRequestController extends Controller
         // Update book quantities
         $book->quantity -= $bookRequests->quantity;
         $book->save();
+        // Update or add stock to the DLC/ALC (requesting entity)
+        $entityId = $bookRequests->requested_by; // Assuming `requested_by` holds the DLC/ALC ID
+        $existingStock = BookStock::where('entity_id', $entityId)
+                                ->where('isbn', $book->isbn)
+                                ->first();
+
+        if ($existingStock) {
+            // Update quantity if the stock already exists
+            $existingStock->quantity += $request->quantity;
+            $existingStock->save();
+        } else {
+            // Add a new stock entry for the requesting entity
+            BookStock::create([
+                'entity_id' => $entityId,
+                'title' => $book->title,
+                'author' => $book->author,
+                'isbn' => $book->isbn,
+                'published_date' => $book->published_date,
+                'quantity' => $request->quantity,
+                'description' => $book->description,
+            ]);
+        }
+
 
         // Generate Challan after approval
             $this->generateChallan($bookRequests);
 
             return redirect()->back()->with('success', 'Request approved and challan generated successfully.');
         }
+
     public function updateStatusdecline($id){
         $bookRequests = BookRequest::find($id);
         $bookRequests->status ='Declined';
         $bookRequests->update();
         return redirect()->back()->with('success', 'Request Declined!.');
         }
+
+    // public function showStocks() {
+    //     $stocks = BookStock::all(); 
+    //     // $stocks = BookStock::where('entity_id', auth::id())->get(); 
+    
+    //     return view('backend.pages.book.book-stock', compact('stocks'));
+    // }
+
 
     public function alcDistribution(){
         return view('backend.pages.book-requests.alc_distribute');
@@ -230,7 +267,7 @@ class BookRequestController extends Controller
         $challan->challan_date = now();
         $challan->remarks = 'Challan generated for approved book request.';
         $challan->save();
-    
+        
         return redirect()->back()->with('success', 'Challan generated successfully with number: ' . $challanNumber);
     }
     

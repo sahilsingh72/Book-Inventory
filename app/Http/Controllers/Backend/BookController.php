@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\BookStock;
 
 class BookController extends Controller
 {
@@ -72,8 +73,14 @@ class BookController extends Controller
 
        return redirect()->back()->with('success', 'Book deleted successfully');
     }
-    public function bookStock(){
-        return view('backend.pages.book.book-stock');
-    }
+
+    public function showStock() {
+        $stocks = BookStock::all(); 
+        return view('backend.pages.book.book-stock', compact('stocks'));
+        }
+
+    // public function bookStock(){
+    //     return view('backend.pages.book.book-stock');
+    // }
 
 }

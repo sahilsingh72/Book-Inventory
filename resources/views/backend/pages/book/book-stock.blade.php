@@ -50,7 +50,31 @@ Book - Admin Panel
                         </div>
                     @endif
                     <div class="data-tables">
-                       
+                        <table id="dataTable" class="text-center">
+                            <thead class="bg-light text-capitalize">
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>ISBN</th>
+                                    <th>Published Date</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($stocks as $key=>$stock)
+                                    <tr>
+                                        <td>{{ ++$key }}</td>
+                                        <td>{{ $stock->title }}</td>
+                                        <td>{{ $stock->author }}</td>
+                                        <td>{{ $stock->isbn }}</td>
+                                        <td>{{ $stock->published_date }}</td>
+                                        <td>{{ $stock->quantity }}</td>
+                                        {{-- <td>{{ $stock->description }}</td> --}}
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
