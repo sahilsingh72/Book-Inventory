@@ -58,18 +58,17 @@ Book request - Admin Panel
                                             <td>{{ ucfirst($request->status) }}</td>
                                             <td>
                                                 @if($request->status === 'pending')
-
-                                                <button type="button" 
-                                                        class="btn btn-success" 
-                                                        onclick="openApproveModal({{ $request->id }}, '{{ $request->title }}', {{ $request->quantity }})">
-                                                    Approve
-                                                </button>
-
-                                                    <form action="{{ route('book-requests.decline', $request->id) }}" method="POST" style="display: inline-block;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger">Decline</button>
-                                                    </form>
-                                                    @else
+                                                    <button type="button" 
+                                                            class="btn btn-success" 
+                                                            onclick="openApproveModal({{ $request->id }}, '{{ $request->title }}', {{ $request->quantity }}, {{ $request->book->quantity }})">
+                                                        Approve
+                                                    </button>
+                                                    <button type="button" 
+                                                            class="btn btn-danger"
+                                                            onclick="openDeclineModal({{ $request->id }}, '{{ $request->title }}')">
+                                                        Decline
+                                                    </button>
+                                                @else
                                                     <span>{{ ucfirst($request->status) }}</span>
                                                 @endif
                                             </td>
@@ -86,7 +85,7 @@ Book request - Admin Panel
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Approval Modal -->
 <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <form action="{{ route('book-requests.approve', ':id') }}" method="POST" id="approveForm">
@@ -104,6 +103,10 @@ Book request - Admin Panel
                         <label for="modalQuantity">Quantity</label>
                         <input type="number" class="form-control" id="modalQuantity" name="quantity" min="1" required>
                     </div>
+                    <div class="form-group">
+                        <label for="modalRemarks">Remarks</label>
+                        <textarea class="form-control" id="modalRemarks" name="remarks" rows="3" placeholder="Enter remarks for declining"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -114,11 +117,70 @@ Book request - Admin Panel
     </div>
 </div>
 
+<!-- Decline Modal -->
+<div class="modal fade" id="declineModal" tabindex="-1" role="dialog" aria-labelledby="declineModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form action="{{ route('book-requests.decline', ':id') }}" method="POST" id="declineForm">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="declineModalLabel">Decline Book Request</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Book Title:</strong> <span id="declineModalBookTitle"></span></p>
+
+                    <div class="form-group">
+                        <label for="declineRemarks">Remarks</label>
+                        <textarea class="form-control" id="declineRemarks" name="remarks" rows="3" placeholder="Enter remarks for declining"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Decline</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Insufficient Stock Modal -->
+<div class="modal fade" id="insufficientStockModal" tabindex="-1" role="dialog" aria-labelledby="insufficientStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="insufficientStockModalLabel">Insufficient Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="insufficientStockMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
-    function openApproveModal(id, title, quantity) {
+    function openApproveModal(id, title, requestedQuantity, availableStock) {
+        if (requestedQuantity > availableStock) {
+            // Set message and show the "Insufficient Stock" modal
+            document.getElementById('insufficientStockMessage').textContent = 
+                `Requested quantity (${requestedQuantity}) exceeds available stock (${availableStock}). Please update the request.`;
+            $('#insufficientStockModal').modal('show');
+            return;
+        }
+
         // Set modal data
         document.getElementById('modalBookTitle').textContent = title;
-        document.getElementById('modalQuantity').value = quantity;
+        document.getElementById('modalQuantity').value = requestedQuantity;
+        document.getElementById('modalRemarks').value = '';
 
         // Update form action
         const form = document.getElementById('approveForm');
@@ -126,6 +188,20 @@ Book request - Admin Panel
 
         // Show modal
         $('#approveModal').modal('show');
+    }
+</script>
+<script>
+    function openDeclineModal(id, title) {
+        // Set modal data
+        document.getElementById('declineModalBookTitle').textContent = title;
+        document.getElementById('modalRemarks').value = '';
+
+        // Update form action
+        const form = document.getElementById('declineForm');
+        form.action = form.action.replace(':id', id);
+
+        // Show modal
+        $('#declineModal').modal('show');
     }
 </script>
 @endsection

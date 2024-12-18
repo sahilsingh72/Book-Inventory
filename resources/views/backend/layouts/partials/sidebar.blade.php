@@ -29,7 +29,7 @@
                     @if ($usr->can('book.create') || $usr->can('book.view') ||  $usr->can('book.edit') ||  $usr->can('book.delete') || $usr->can('book.distribution') || $usr->can('book.stock'))
                     <li>
                         <a href="javascript:void(0)" aria-expanded="true"><i class="ti-book"></i><span>book</span></a>
-                        <ul class="collapse {{ Route::is('admin.book.create') || Route::is('admin.book.index') || Route::is('book-requests.index') || Route::is('book-requests.create') || Route::is('admin.book.edit') || Route::is('admin.book.show') || Route::is('book-requests.alc-distribution') ? 'in' : '' }}">
+                        <ul class="collapse {{ Route::is('admin.book.create') || Route::is('admin.book.index') || Route::is('book-requests.index') || Route::is('book-requests.create') || Route::is('admin.book.edit') || Route::is('admin.book.show')  || Route::is('admin.book.stock') || Route::is('book-requests.alc-distribution') ? 'in' : '' }}">
                             @if($usr->can('book.view'))
                                 <li class="{{ Route::is('admin.book.index') ? 'active' : '' }}"><a href="{{ route('admin.book.index') }}">Book</a></li>
                             @endif

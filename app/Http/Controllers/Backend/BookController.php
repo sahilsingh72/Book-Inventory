@@ -6,6 +6,7 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\BookStock;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -75,8 +76,10 @@ class BookController extends Controller
     }
 
     public function showStock() {
-        $stocks = BookStock::all(); 
-        return view('backend.pages.book.book-stock', compact('stocks'));
+        $entityId = Auth::user()->id;
+        $stocks = BookStock::where('entity_id', $entityId)->get(); 
+        // $stocks = BookStock::all(); 
+        return view('backend.pages.book.book-stock', compact('stocks')); 
         }
 
     // public function bookStock(){

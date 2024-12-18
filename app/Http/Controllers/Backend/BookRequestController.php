@@ -11,7 +11,7 @@ use App\Models\BookStock;
 use Illuminate\Http\Request;
 use App\Models\Challan;   
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request as HttpRequest; // Alias for the HTTP Request
+use Illuminate\Http\Request as HttpRequest;
 
 class BookRequestController extends Controller
 {
@@ -153,7 +153,7 @@ class BookRequestController extends Controller
         return redirect()->back()->with('success', 'Book request ' . $status . ' successfully.');
     }
 
-    // Other methods as required (index, show, etc.)
+    
     public function request_view(Request $request){
         $user = Auth::id();
         $status = $request->get('status', 'pending'); // Get status from query parameter
@@ -178,6 +178,7 @@ class BookRequestController extends Controller
 
         $request->validate([
             'quantity' => 'required|integer|min:1',
+            'remarks' => 'nullable|string|max:255',
         ]);
 
         // Find the book request 
@@ -199,6 +200,7 @@ class BookRequestController extends Controller
         // Approve the book request and update quantity
         $bookRequests->status ='Approved';
         $bookRequests->quantity = $request->quantity;
+        $bookRequests->remarks = $request->remarks;
         $bookRequests->update();
 
         // Update book quantities
@@ -227,28 +229,92 @@ class BookRequestController extends Controller
             ]);
         }
 
-
         // Generate Challan after approval
             $this->generateChallan($bookRequests);
-
             return redirect()->back()->with('success', 'Request approved and challan generated successfully.');
         }
 
-    public function updateStatusdecline($id){
-        $bookRequests = BookRequest::find($id);
+    // public function updateStatusapprove(Request $request, $id){
+
+    //     $request->validate([
+    //         'quantity' => 'required|integer|min:1',
+    //         'remarks' => 'nullable|string|max:255',
+    //     ]);
+
+    //     // Find the book request 
+    //     $bookRequests = BookRequest::find($id);
+    //     if (!$bookRequests) {
+    //         return redirect()->back()->with('error', 'Book request not found.');
+    //     }  
+
+    //     $approvingEntityId = Auth::user()->id; // ID of the approving admin (OKCL or DLC)
+    //     $requestedEntityId = $bookRequests->requested_by; // ID of the requesting entity (DLC or ALC)
+     
+    //     $approvingEntityStock = BookStock::where('entity_id', $approvingEntityId)
+    //     ->where('isbn', $bookRequests->book->isbn)
+    //     ->first();
+
+    //     // Fetch the book details from the books table
+    //     $book = $bookRequests->book;
+    //     if (!$book) {
+    //         return redirect()->back()->with('error', 'Book not found.');
+    //     }
+
+    //     // Check if sufficient books are available in OKCL stock
+    //     if (!$approvingEntityStock || $approvingEntityStock->quantity < $request->quantity) {
+    //         return redirect()->back()->with('error', 'Not enough books available.');
+    //     }
+
+    //     // Deduct the quantity from the approving entity's stock
+    //     $approvingEntityStock->quantity -= $request->quantity;
+    //     $approvingEntityStock->save();
+        
+
+    //     // Add the approved books to the requesting entity's stock
+    //     $requestingEntityStock = BookStock::firstOrCreate(
+    //         [
+    //             'entity_id' => $requestedEntityId,
+    //             'isbn' => $bookRequests->book->isbn,
+    //         ],
+    //         [
+    //             'title' => $bookRequests->book->title,
+    //             'author' => $bookRequests->book->author,
+    //             'description' => $bookRequests->book->description,
+    //             'quantity' => 0, // Set the default quantity to 0
+    //             'published_date' => $bookRequests->book->published_date,
+    //         ]
+    //     );
+    //     $requestingEntityStock->quantity += $request->quantity;
+    //     $requestingEntityStock->save();
+
+    //     // Approve the book request and update quantity
+    //     $bookRequests->status ='Approved';
+    //     $bookRequests->quantity = $request->quantity;
+    //     $bookRequests->remarks = $request->remarks;
+    //     $bookRequests->update();
+
+
+
+
+    //     // Generate Challan after approval
+    //         $this->generateChallan($bookRequests);
+
+    //         return redirect()->back()->with('success', 'Request approved and challan generated successfully.');
+    //     }
+
+    public function updateStatusdecline(Request $request, $id){
+
+        $request->validate([
+            'remarks' => 'nullable|string|max:255',
+        ]);
+
+        $bookRequests = BookRequest::findOrFail($id);
         $bookRequests->status ='Declined';
+        $bookRequests->remarks = $request->remarks;
         $bookRequests->update();
         return redirect()->back()->with('success', 'Request Declined!.');
         }
-
-    // public function showStocks() {
-    //     $stocks = BookStock::all(); 
-    //     // $stocks = BookStock::where('entity_id', auth::id())->get(); 
-    
-    //     return view('backend.pages.book.book-stock', compact('stocks'));
-    // }
-
-
+ 
     public function alcDistribution(){
         return view('backend.pages.book-requests.alc_distribute');
     }
